@@ -1,9 +1,9 @@
+import os
 import requests
-from airflow.sdk import Variable
 
 
 def _get_webhook_url() -> str:
-    return Variable.get("SLACK_WEBHOOK_URL", default_var="")
+    return os.getenv("SLACK_WEBHOOK_URL") or os.getenv("AIRFLOW_VAR_SLACK_WEBHOOK_URL", "")
 
 
 def _send_slack_message(message: str) -> None:
@@ -42,6 +42,7 @@ def on_failure_callback(context: dict) -> None:
 
 
 def on_success_callback(context: dict) -> None:
+    print("[slack_alerts] on_success_callback ejecutado")
     dag_id       = context["dag"].dag_id
     logical_date = context.get("logical_date") or context.get("execution_date")
     execution_dt = logical_date.strftime("%Y-%m-%d %H:%M:%S UTC") if logical_date else "N/A"
