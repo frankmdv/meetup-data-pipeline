@@ -1,0 +1,178 @@
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_FACT_EVENTS (
+    event_id                STRING          NOT NULL PRIMARY KEY,
+    event_name              STRING,
+    event_status            STRING,
+    visibility              STRING,
+    event_at                TIMESTAMP_NTZ,
+    event_month             TIMESTAMP_NTZ,
+    event_week              TIMESTAMP_NTZ,
+    event_day_name          STRING,
+    duration_minutes        INTEGER,
+    has_fee                 BOOLEAN,
+    fee_amount              FLOAT,
+    fee_currency            STRING,
+    confirmed_attendees     INTEGER,
+    maybe_attendees         INTEGER,
+    waitlist_count          INTEGER,
+    rsvp_limit              INTEGER,
+    rsvp_fill_rate_pct      FLOAT,
+    rating_average          FLOAT,
+    rating_count            INTEGER,
+    group_id                INTEGER,
+    group_name              STRING,
+    category_id             INTEGER,
+    category_name           STRING,
+    group_member_count      INTEGER,
+    group_rating            FLOAT,
+    join_mode               STRING,
+    city_id                 INTEGER,
+    city                    STRING,
+    state_code              STRING,
+    country_code            STRING,
+    timezone                STRING,
+    venue_id                INTEGER,
+    venue_name              STRING,
+    venue_city              STRING,
+    venue_address           STRING,
+    venue_latitude          FLOAT,
+    venue_longitude         FLOAT,
+    venue_normalised_rating FLOAT,
+    event_url               STRING,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (group_id, event_status);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_GROUP_PERFORMANCE (
+    group_id                  INTEGER         NOT NULL PRIMARY KEY,
+    group_name                STRING,
+    city                      STRING,
+    state_code                STRING,
+    country_code              STRING,
+    category_id               INTEGER,
+    category_name             STRING,
+    member_count              INTEGER,
+    group_rating              FLOAT,
+    join_mode                 STRING,
+    group_created_at          TIMESTAMP_NTZ,
+    total_events              INTEGER,
+    upcoming_events           INTEGER,
+    past_events               INTEGER,
+    avg_attendees_per_event   FLOAT,
+    max_attendees_event       INTEGER,
+    total_confirmed_attendees INTEGER,
+    avg_rsvp_fill_rate_pct    FLOAT,
+    paid_events_count         INTEGER,
+    avg_event_fee             FLOAT,
+    avg_event_rating          FLOAT,
+    distinct_venues_used      INTEGER,
+    group_topics              STRING,
+    total_topics              INTEGER,
+    _gold_loaded_at           TIMESTAMP_NTZ
+)
+CLUSTER BY (category_id, country_code);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_CITY_STATS (
+    city_id                 INTEGER,
+    city_name               STRING,
+    state_code              STRING,
+    country_code            STRING,
+    country_name            STRING,
+    latitude                FLOAT,
+    longitude               FLOAT,
+    city_registered_members INTEGER,
+    popularity_ranking      INTEGER,
+    total_groups            INTEGER,
+    distinct_categories     INTEGER,
+    avg_members_per_group   FLOAT,
+    largest_group_size      INTEGER,
+    total_group_memberships INTEGER,
+    avg_group_rating        FLOAT,
+    total_events            INTEGER,
+    upcoming_events         INTEGER,
+    avg_event_attendees     FLOAT,
+    total_attendees         INTEGER,
+    paid_events             INTEGER,
+    distinct_venues         INTEGER,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (country_code);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_TOPIC_TRENDS (
+    topic_id                INTEGER,
+    topic_name              STRING,
+    url_key                 STRING,
+    parent_topic_id         INTEGER,
+    topic_global_members    INTEGER,
+    total_groups            INTEGER,
+    cities_covered          INTEGER,
+    countries_covered       INTEGER,
+    avg_group_size          FLOAT,
+    total_group_members     INTEGER,
+    total_events            INTEGER,
+    avg_event_attendees     FLOAT,
+    total_attendees         INTEGER,
+    members_interested      INTEGER,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (parent_topic_id);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_CATEGORY_SUMMARY (
+    category_id             INTEGER,
+    category_name           STRING,
+    short_name              STRING,
+    total_groups            INTEGER,
+    cities_with_groups      INTEGER,
+    countries_with_groups   INTEGER,
+    avg_group_size          FLOAT,
+    total_memberships       INTEGER,
+    avg_group_rating        FLOAT,
+    total_events            INTEGER,
+    upcoming_events         INTEGER,
+    avg_attendees_per_event FLOAT,
+    total_attendees         INTEGER,
+    paid_events             INTEGER,
+    avg_fee_amount          FLOAT,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (category_id);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_VENUE_STATS (
+    venue_id                INTEGER         NOT NULL PRIMARY KEY,
+    venue_name              STRING,
+    address                 STRING,
+    city                    STRING,
+    state_code              STRING,
+    country_code            STRING,
+    latitude                FLOAT,
+    longitude               FLOAT,
+    venue_rating            FLOAT,
+    venue_rating_count      INTEGER,
+    normalised_rating       FLOAT,
+    total_events_hosted     INTEGER,
+    distinct_groups         INTEGER,
+    distinct_categories     INTEGER,
+    avg_attendees           FLOAT,
+    max_attendees           INTEGER,
+    total_attendees         INTEGER,
+    avg_event_rating        FLOAT,
+    paid_events_hosted      INTEGER,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (city, country_code);
+
+CREATE TABLE IF NOT EXISTS MEETUP_DB.GOLD.GLD_AGG_MEMBER_ACTIVITY (
+    member_id               INTEGER         NOT NULL PRIMARY KEY,
+    member_name             STRING,
+    city                    STRING,
+    country_code            STRING,
+    member_status           STRING,
+    joined_at               TIMESTAMP_NTZ,
+    last_visited_at         TIMESTAMP_NTZ,
+    days_since_last_visit   INTEGER,
+    activity_segment        STRING          COMMENT 'active (≤30d), at_risk (≤90d), dormant (≤365d), churned (>365d)',
+    total_groups            INTEGER,
+    total_topics            INTEGER,
+    topics_of_interest      STRING,
+    _gold_loaded_at         TIMESTAMP_NTZ
+)
+CLUSTER BY (country_code, activity_segment);
