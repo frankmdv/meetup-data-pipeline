@@ -9,7 +9,7 @@ from scripts.generate_traffic import generate_traffic
 
 default_args = {
     "owner": "data-engineering",
-    "retries": 1,
+    "retries": 2,
     "retry_delay": timedelta(minutes=2),
     "on_failure_callback": on_failure_callback,
 }
